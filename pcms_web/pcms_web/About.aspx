@@ -8,6 +8,7 @@
         About
     </h2>
     <p>
-        Put content here.
+        This web application software is an open source & freely distributed product which contains the basic operatins related to a petty cash flow management in a company.
+        Designers or the implementers of the basic product will not be responsible for any effects by using this application.
     </p>
 </asp:Content>

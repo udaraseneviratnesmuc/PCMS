@@ -13,8 +13,11 @@
     <div class="page">
         <div class="header">
             <div class="title">
+                <div>
+                    <img src="img/logo.jpg" height="51px" alt="logo"/>
+                </div>
                 <h1>
-                    My ASP.NET Application
+                    Internal Petty Cash Management System
                 </h1>
             </div>
             <div class="loginDisplay">
