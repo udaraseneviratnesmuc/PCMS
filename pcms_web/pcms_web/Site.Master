@@ -37,6 +37,7 @@
                         <asp:MenuItem NavigateUrl="~/Default.aspx" Text="Home"/>
                         <asp:MenuItem NavigateUrl="~/About.aspx" Text="About"/>
                         <asp:MenuItem NavigateUrl="~/PettyAccount.aspx" Text="Account"/>
+                        <asp:MenuItem NavigateUrl="~/PetCashRequest.aspx" Text="Requst"/>
                     </Items>
                 </asp:Menu>
             </div>
