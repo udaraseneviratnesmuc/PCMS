@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data.SqlClient;
+using System.Data;
 
 namespace pcms_web
 {
@@ -15,6 +16,7 @@ namespace pcms_web
             PACurrentTime.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             PACurrentDay.Text = DateTime.Now.DayOfWeek.ToString();
             PACurrentBal.Text = getCurrentBalance()+"";
+            bindGridView();
         }
 
         protected void Button1_Click(object sender, EventArgs e)
@@ -25,6 +27,7 @@ namespace pcms_web
             {
                 Double newBalanceWithCreditedAmount = creditToAccount(Convert.ToDouble(amount.Text));
                 PACurrentBal.Text = newBalanceWithCreditedAmount + "";
+                bindGridView();
             }
         }
 
@@ -84,6 +87,7 @@ namespace pcms_web
             {
                 Double newBalanceWithDebitedAmount = debitFromAcc(Convert.ToDouble(amount.Text));
                 PACurrentBal.Text = newBalanceWithDebitedAmount + "";
+                bindGridView();
             }
         }
 
@@ -104,6 +108,33 @@ namespace pcms_web
 
             return getCurrentBalance();
 
+        }
+
+        protected DataTable getData(){
+            SqlConnection cnn = getConnection();
+            cnn.Open();
+
+            string viewPettyCashAccRecStr = "select * from petty_cash_acc order by id desc";
+            SqlCommand viewPettyCashRecCmd = new SqlCommand(viewPettyCashAccRecStr, cnn);
+            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(viewPettyCashRecCmd);
+            cnn.Close();
+
+            DataTable dt = new DataTable();
+            sqlDataAdapter.Fill(dt);
+
+            return dt;
+        }
+
+        protected void bindGridView() {
+            GridView1.DataSourceID = null;
+            GridView1.DataSource = getData();
+            GridView1.DataBind();
+        }
+
+        protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            GridView1.PageIndex = e.NewPageIndex;
+            bindGridView();
         }
     }
 }
