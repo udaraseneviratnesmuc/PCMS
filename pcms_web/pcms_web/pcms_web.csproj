@@ -60,6 +60,7 @@
       <DependentUpon>pcms.mdf</DependentUpon>
     </Content>
     <Content Include="img\logo.jpg" />
+    <Content Include="PetCashApproval.aspx" />
     <Content Include="PetCashRequest.aspx" />
     <Content Include="PettyAccount.aspx" />
     <Content Include="Styles\Site.css" />
@@ -121,6 +122,13 @@
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="PetCashApproval.aspx.cs">
+      <DependentUpon>PetCashApproval.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PetCashApproval.aspx.designer.cs">
+      <DependentUpon>PetCashApproval.aspx</DependentUpon>
     </Compile>
     <Compile Include="PetCashRequest.aspx.cs">
       <DependentUpon>PetCashRequest.aspx</DependentUpon>
