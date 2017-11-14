@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Security;
 using System.Web.SessionState;
+using System.Security.Principal;
 
 namespace pcms_web
 {
@@ -41,6 +42,24 @@ namespace pcms_web
             // is set to InProc in the Web.config file. If session mode is set to StateServer 
             // or SQLServer, the event is not raised.
 
+        }
+
+        protected void Application_AuthenticateRequest(Object sender, EventArgs e)
+        {
+            if (HttpContext.Current.User != null)
+            {
+                if (HttpContext.Current.User.Identity.IsAuthenticated)
+                {
+                    if (HttpContext.Current.User.Identity is FormsIdentity)
+                    {
+                        FormsIdentity id = (FormsIdentity)HttpContext.Current.User.Identity;
+                        FormsAuthenticationTicket ticket = id.Ticket;
+                        string userData = ticket.UserData;
+                        string[] roles = userData.Split(',');
+                        HttpContext.Current.User = new GenericPrincipal(id, roles);
+                    }
+                }
+            }
         }
 
     }
