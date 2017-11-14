@@ -44,19 +44,21 @@ namespace pcms_web.Account
                     if (reader.HasRows)
                     {
                         userId = Convert.ToInt32(reader["UserId"]);
-                        CustomUserContext.userId = userId;
                         roles = reader["RoleId"].ToString();
                         con.Close();
 
                         FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1, LoginUser.UserName, DateTime.Now, DateTime.Now.AddMinutes(2880), LoginUser.RememberMeSet, roles, FormsAuthentication.FormsCookiePath);
                         string hash = FormsAuthentication.Encrypt(ticket);
                         HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName, hash);
+                        HttpCookie userIdCookie = new HttpCookie("userId", userId+"");
 
                         if (ticket.IsPersistent)
                         {
                             cookie.Expires = ticket.Expiration;
+                            userIdCookie.Expires = ticket.Expiration;
                         }
                         Response.Cookies.Add(cookie);
+                        Response.Cookies.Add(userIdCookie);
                         Response.Redirect(FormsAuthentication.GetRedirectUrl(LoginUser.UserName, LoginUser.RememberMeSet));
                     }
                     else {
