@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Net.Mail;
 using System.Net;
+using System.Web.Configuration;
 
 namespace pcms_web
 {
@@ -17,13 +18,13 @@ namespace pcms_web
             mailMsg.Body = body;
 
             SmtpClient smtpClient = new SmtpClient();
-            smtpClient.Host = "smtp.gmail.com";
+            smtpClient.Host = WebConfigurationManager.AppSettings["smtpHost"];
             smtpClient.EnableSsl = true;
 
-            NetworkCredential NetworkCred = new NetworkCredential("udara.seneviratne@hsenidmobile.com", "lifeisshort123");
+            NetworkCredential NetworkCred = new NetworkCredential(WebConfigurationManager.AppSettings["smtpUsername"], WebConfigurationManager.AppSettings["smtpPassword"]);
             smtpClient.UseDefaultCredentials = true;
             smtpClient.Credentials = NetworkCred;
-            smtpClient.Port = 587;
+            smtpClient.Port = Convert.ToInt32(WebConfigurationManager.AppSettings["smtpPort"]);
             smtpClient.Send(mailMsg);
         }
     }
