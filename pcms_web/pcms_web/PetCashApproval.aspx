@@ -38,8 +38,8 @@
             <asp:Label ID="requestId" runat="server"></asp:Label>
             <asp:Button ID="approve" runat="server" onclick="Button1_Click" 
                 Text="Approve" />
-            <asp:Button ID="reject" runat="server" Text="Reject" />
-            <asp:Button ID="pend" runat="server" Text="Pending" />
+            <asp:Button ID="reject" runat="server" Text="Reject" onclick="reject_Click" />
+            <asp:Button ID="pend" runat="server" Text="Pending" onclick="pend_Click" />
         </div>
         
         <br />
