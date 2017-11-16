@@ -46,6 +46,7 @@ namespace pcms_web
 
             GridView1.DataBind();
             cnn.Close();
+            sendNotification(claimId, ConstantVars.APPROVED);
         }
 
         protected void rejectClaim(int claimId)
@@ -61,6 +62,8 @@ namespace pcms_web
 
             GridView1.DataBind();
             cnn.Close();
+
+            sendNotification(claimId, ConstantVars.REJECTED);
         }
 
         protected void reject_Click(object sender, EventArgs e)
@@ -81,11 +84,73 @@ namespace pcms_web
 
             GridView1.DataBind();
             cnn.Close();
+
+            sendNotification(claimId, ConstantVars.PENDING);
         }
 
         protected void pend_Click(object sender, EventArgs e)
         {
             setClaimPending(Convert.ToInt32(requestId.Text));
+        }
+
+        protected void sendNotification(int claimId, string claimStatus) {
+            Dictionary<string, string> claimerData = getClaimersDetails(claimId);
+            var username = claimerData["username"];
+            var email = claimerData["email"];
+            var subject = "Petty Cash Claim ";
+            var body = "Dear " + username + ", \n";
+
+            if (claimStatus == ConstantVars.PENDING) {
+                subject = subject + "[Pending]";
+                body = body + "Your petty claim request status changed to PENDING state. If you have any issue regarding that please contact the admin";
+            }
+            else if (claimStatus == ConstantVars.APPROVED)
+            {
+                subject = subject + "[Approved]";
+                body = body + "Your petty claim request status changed to APPROVED state. Please collect your money";
+            }else if(claimStatus == ConstantVars.REJECTED){
+                subject = subject + "[Rejected]";
+                body = body + "Your petty claim request status changed to REJECTED state. Please contact the admin";
+            }
+
+            SendMail sendMail = new SendMail();
+            sendMail.sendViaGmail("udara.seneviratne@hsenidmobile.com", email, subject, body);
+        }
+
+        private Dictionary<string, string> getClaimersDetails(int claimId) {
+            SqlConnection cnn = getConnection();
+            cnn.Open();
+
+            string claimersIdCmdStr = "select UserId from petty_cash_requests where ClaimId=@claimId";
+            SqlCommand claimerIdCmd = new SqlCommand(claimersIdCmdStr, cnn);
+            claimerIdCmd.Parameters.AddWithValue("@claimId", claimId);
+            SqlDataReader dataReader = claimerIdCmd.ExecuteReader();
+
+            int userId = 0;
+
+            while (dataReader.Read())
+            {
+                userId = Convert.ToInt32(dataReader.GetSqlValue(0).ToString());
+            }
+
+            cnn.Close();
+
+            cnn.Open();
+            string claimersDetailsCmdStr = "select UserName, Email from user_tbl where UserId=@userId";
+            SqlCommand claimersDetailsCmd = new SqlCommand(claimersDetailsCmdStr, cnn);
+            claimersDetailsCmd.Parameters.AddWithValue("@userId", userId);
+            SqlDataReader claimerDetailsDr = claimersDetailsCmd.ExecuteReader();
+
+            Dictionary<string, string> claimerData = new Dictionary<string, string>();
+            while (claimerDetailsDr.Read())
+            {
+                claimerData.Add("username", claimerDetailsDr.GetSqlValue(0).ToString());
+                claimerData.Add("email", claimerDetailsDr.GetSqlValue(1).ToString());
+            }
+
+            cnn.Close();
+
+            return claimerData;
         }
 
     }
