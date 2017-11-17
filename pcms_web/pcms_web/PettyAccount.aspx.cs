@@ -13,9 +13,11 @@ namespace pcms_web
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            SqlConnection cnn = getConnection();
+
             PACurrentTime.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             PACurrentDay.Text = DateTime.Now.DayOfWeek.ToString();
-            PACurrentBal.Text = getCurrentBalance()+"";
+            PACurrentBal.Text = Util.getCurrentBalance(cnn)+"";
             bindGridView();
         }
 
@@ -32,11 +34,11 @@ namespace pcms_web
         }
 
         protected Double creditToAccount(Double amountToCredit) {
-
-            Double availableBalance = getCurrentBalance();
-            Double newBalance = availableBalance + amountToCredit;
-
             SqlConnection cnn = getConnection();
+
+            Double availableBalance = Util.getCurrentBalance(cnn);
+            Double newBalance = availableBalance + amountToCredit;
+            
             cnn.Open();
 
             String sqlCmdStr = "insert into petty_cash_acc(timestamp, balance) values(@timestamp, @balance)";
@@ -47,30 +49,7 @@ namespace pcms_web
             sqlCmd.ExecuteNonQuery();
             cnn.Close();
 
-            return getCurrentBalance();
-        }
-
-        protected Double getCurrentBalance() {
-
-            SqlConnection cnn = getConnection();
-            cnn.Open();
-
-            string maxIdCommandStr = "select max(id) from petty_cash_acc";
-            SqlCommand maxIdCommand = new SqlCommand(maxIdCommandStr, cnn);
-            int maxId = Convert.ToInt32(maxIdCommand.ExecuteScalar().ToString());
-
-            string currentBalanceCommandStr = "select balance from petty_cash_acc where id='"+maxId+"'";
-            SqlCommand currentBalCommand = new SqlCommand(currentBalanceCommandStr, cnn);
-            SqlDataReader dataReader = currentBalCommand.ExecuteReader();
-
-            String currentBal = "0";
-
-            while(dataReader.Read()){
-                currentBal = dataReader.GetSqlValue(0).ToString();
-            }
-
-            cnn.Close();
-            return Convert.ToDouble(currentBal);
+            return Util.getCurrentBalance(cnn);
         }
 
         protected SqlConnection getConnection() {
@@ -92,10 +71,11 @@ namespace pcms_web
         }
 
         protected Double debitFromAcc(Double amoumntToDebit){
-            Double availableBalance = getCurrentBalance();
+            SqlConnection cnn = getConnection();
+
+            Double availableBalance = Util.getCurrentBalance(cnn);
             Double newBalance = availableBalance - amoumntToDebit;
 
-            SqlConnection cnn = getConnection();
             cnn.Open();
 
             String sqlCmdStr = "insert into petty_cash_acc(timestamp, balance) values(@timestamp, @balance)";
@@ -106,7 +86,7 @@ namespace pcms_web
             sqlCmd.ExecuteNonQuery();
             cnn.Close();
 
-            return getCurrentBalance();
+            return Util.getCurrentBalance(cnn);
 
         }
 
